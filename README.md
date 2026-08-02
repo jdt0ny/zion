@@ -120,6 +120,7 @@ Zion mantiene un registro dettagliato di scoperta per ogni runtime investigato. 
 | #001 | Cheshire Cat | Esplorare lo stato agente portabile | ✅ Completo |
 | #002 | DS4 | Valutare DS4 come runtime di orchestrazione | ✅ Completo |
 | #003 | Claude Code | Analizzare la gestione dello stato in Claude Code | ✅ Completo |
+| #004 | Claude Code | Scoperta completa dello stato con analisi dettagliata | ✅ Completo |
 
 ## Architettura Aggiornata
 
@@ -143,9 +144,9 @@ Ecco la distribuzione degli elementi di stato per categoria di portabilità (bas
 
 | Portabilità      | Elementi                        | Percentuale |
 |------------------|---------------------------------|-------------|
-| Portabile        | Conversazione, Memory Files, Tools, Configuration | 70%         |
-| Ricostruibile    | Identity, Plugin Code, Dependencies | 20%         |
-| Legato al Runtime  | Runtime State, GPU State, Threads | 10%         |
+| Portabile        | Conversazione, Memory Files, Tools, Configuration, Memory Index | 75%         |
+| Ricostruibile    | Identity, Plugin Code, Dependencies, Plugin Manifests | 15%         |
+| Legato al Runtime  | Runtime State, GPU State, Threads, LLM Context | 10%         |
 
 **Classificazione Esplicita dello Stato**
 
@@ -179,6 +180,7 @@ I risultati chiave dalle sperimentazioni includono:
 - [x] Indagare Cheshire Cat (confine di ricerca stabilito)
 - [x] Indagare DS4 (confine di ricerca ridefinito come fornitore LLM)
 - [x] Indagare Claude Code (architettura file-based — più portabile)
+- [x] Indagare Claude Code (scoperta completa dello stato)
 - [ ] Misurare il recupero dello stato
 - [ ] Indagare la portabilità cross-runtime
 - [ ] Sperimentare la riconciliazione e il conflitto di stato
