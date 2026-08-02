@@ -111,6 +111,79 @@ ZionState
 └── runtime         # metadati di runtime
 ```
 
+## Stato delle Sperimentazioni
+
+Zion mantiene un registro dettagliato di scoperta per ogni runtime investigato. I documenti di ricerca sono in `specification/experiments/`:
+
+| Esperimento | Runtime | Obiettivo | Stato |
+|-------------|---------|-----------|-------|
+| #001 | Cheshire Cat | Esplorare lo stato agente portabile | ✅ Completo |
+| #002 | DS4 | Valutare DS4 come runtime di orchestrazione | ✅ Completo |
+| #003 | Claude Code | Analizzare la gestione dello stato in Claude Code | ✅ Completo |
+
+## Architettura Aggiornata
+
+```
+                 ZION STATE
+                      │
+        ┌─────────────┼─────────────┐
+        ↓               ↓               ↓
+    DS4          Cheshire Cat    Claude Code
+        │               │               │
+        └───────────────┼───────────────┘
+                        ↓
+                Stato Portabile
+```
+
+Il pacchetto core `zion` non ha dipendenze da alcun runtime. Il codice specifico del runtime vive negli adattatori.
+
+## Statistiche di Portabilità
+
+Ecco la distribuzione degli elementi di stato per categoria di portabilità (basata sulle scoperte aggiornate):
+
+| Portabilità      | Elementi                        | Percentuale |
+|------------------|---------------------------------|-------------|
+| Portabile        | Conversazione, Memory Files, Tools, Configuration | 70%         |
+| Ricostruibile    | Identity, Plugin Code, Dependencies | 20%         |
+| Legato al Runtime  | Runtime State, GPU State, Threads | 10%         |
+
+**Classificazione Esplicita dello Stato**
+
+Ogni elemento dello stato porta una classificazione di portabilità:
+
+- `portabile`: Può essere serializzato e trasferito indipendentemente dal runtime.
+- `ricostruibile`: Un altro runtime può ricrearlo, ma potrebbe non copiarlo direttamente.
+- `legato_al_runtime`: Dipende dal motore di inferenza, modello, processo o runtime.
+
+La classificazione è fondamentale: mai contrassegnare informazioni specifiche del runtime come portabili senza prova.
+
+## Stato attuale
+
+**Ricerca / Sperimentale** — v0.1
+
+Questa è la prima fase di bootstrap. Il modello di stato è definito, la serializzazione JSON funziona, e i confini degli adattatori sono stati tracciati. Sono state completate tre esperimentazioni di ricerca su diversi runtime.
+
+I risultati chiave dalle sperimentazioni includono:
+
+- **ZionState v0.1** specificato con successo e testato per la fedeltà round-trip JSON
+- **Adattatore Cheshire Cat** progettato per estrarre: storia delle conversazioni (JSON), dati key-value (globali e per utente), manifesti dei plugin, configurazione dei plugin, elenco dei plugin attivi, definizioni degli strumenti (nome + schema JSON)
+- **Adattatore DS4** ridefinito come fornitore LLM piuttosto che come estratore di stato agente — DS4 fornisce inferenza locale tramite la sua API OpenAI-compatibile, non stato agente portabile
+- **Scoperta di Claude Code** rivela l'architettura più portabile di tutte — file system basato su JSON, nessun database, trasferimento familiare dello stato
+- Classificazione chiara dello stato in tre categorie: portatile (serializzabile indipendentemente), ricostruibile (può essere ricreato ma non copiato direttamente), legato al runtime (dipende dal motore di inferenza, modello, processo o runtime)
+
+## Roadmap
+
+- [x] Definire Zion State v0.1
+- [x] Implementare la serializzazione JSON
+- [x] Testare la fedeltà round-trip
+- [x] Indagare Cheshire Cat (confine di ricerca stabilito)
+- [x] Indagare DS4 (confine di ricerca ridefinito come fornitore LLM)
+- [x] Indagare Claude Code (architettura file-based — più portabile)
+- [ ] Misurare il recupero dello stato
+- [ ] Indagare la portabilità cross-runtime
+- [ ] Sperimentare la riconciliazione e il conflitto di stato
+- [ ] Implementare adattatori funzionanti
+
 Ogni elemento porta una classificazione di portabilità:
 - `portatile`: Può essere serializzato e trasferito indipendentemente dal runtime.
 - `ricostruibile`: Un altro runtime può ricrearlo, ma potrebbe non copiarlo direttamente.
