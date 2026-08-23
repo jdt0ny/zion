@@ -17,6 +17,7 @@ from zion.models import (
 from zion.state import ZionState, inspect_state
 from zion.export import export_state
 from zion.import_ import import_state
+from zion.recovery import RecoveryReport, measure_recovery, round_trip_measure
 
 __all__ = [
     "AgentIdentity",
@@ -31,4 +32,7 @@ __all__ = [
     "export_state",
     "import_state",
     "inspect_state",
+    "RecoveryReport",
+    "measure_recovery",
+    "round_trip_measure",
 ]

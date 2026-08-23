@@ -11,9 +11,12 @@ Ogni elemento ha una classificazione di portabilita':
 """
 
 from datetime import datetime
-from typing import Any, Literal
+from typing import Literal, Optional
 
-from pydantic import BaseModel, Field
+try:
+    from pydantic import BaseModel  
+except ImportError:
+    from pydantic.v1 import BaseModel
 
 
 # I tre livelli di portabilita' possibili
@@ -25,7 +28,7 @@ class MemoryEntry(BaseModel):
     id: str
     content: str
     created_at: datetime
-    updated_at: datetime | None = None
+    updated_at: Optional[datetime] = None
     portability: Portability = "portable"
 
 
@@ -65,12 +68,12 @@ class ProjectState(BaseModel):
     """A quale progetto appartiene l'agente."""
     id: str
     name: str
-    repository: str | None = None
+    repository: Optional[str] = None
     description: str = ""
 
 
 class RuntimeState(BaseModel):
     """Che motore sta eseguendo l'agente in questo momento."""
-    engine: str | None = None
-    model: str | None = None
+    engine: Optional[str] = None
+    model: Optional[str] = None
     state: Portability = "reconstructable"
