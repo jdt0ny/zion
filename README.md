@@ -32,7 +32,8 @@ Gli agenti AI di oggi nascono dentro un runtime e muoiono con esso. Quando si in
                        │
          ┌─────────────┼─────────────┐
          ↓               ↓               ↓
-     DS4          Cheshire Cat    Claude Code
+     DS4           Cheshire Cat    Claude Code
+  (LLM provider)   (adapter)       (adapter)
          │               │               │
          └───────────────┼───────────────┘
                          ↓
@@ -40,6 +41,11 @@ Gli agenti AI di oggi nascono dentro un runtime e muoiono con esso. Quando si in
 ```
 
 Il pacchetto core `zion` non ha dipendenze da alcun runtime. Il codice specifico del runtime vive negli adattatori.
+
+Componenti:
+- `src/zion/` — core library (modelli, serializzazione, recovery, migration, reconciliation)
+- `adapters/` — adapter per runtime specifici (Cheshire Cat, DS4)
+- `src/zion/mcp/` — server MCP per strumenti agenti
 
 ## Statistiche di Portabilità
 
@@ -87,16 +93,18 @@ I risultati chiave includono:
 - [x] Indagare Claude Code (scoperta completa dello stato)
 - [x] Misurare il recupero dello stato
 - [x] Server MCP con strumenti export/import/inspect/measure/round_trip
+- [x] Implementare adattatori funzionanti (Cheshire Cat, DS4)
+- [x] Migrazione cross-runtime con verifica compatibilità
+- [x] Riconciliazione conflitti di stato (overwrite, merge, keep_target)
+- [x] Test specifici per adapter, migration, MCP server
 - [ ] Indagare la portabilità cross-runtime
-- [ ] Sperimentare la riconciliazione e il conflitto di stato
-- [ ] Implementare adattatori funzionanti
 
 ## Avvio rapido
 
 ```bash
 pip install -e ".[dev]"
 pytest -q
-# 37 test: modelli, serializzazione, round-trip, misurazione recupero
+# 88 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP
 ```
 
 ## MCP Server

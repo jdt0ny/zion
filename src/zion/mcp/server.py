@@ -12,23 +12,42 @@ import json
 import tempfile
 from pathlib import Path
 
-from mcp.server.mcpserver import MCPServer
+try:
+    from mcp.server.mcpserver import MCPServer
+except ImportError:  # pragma: no cover
+    from mcp.server.fastmcp import FastMCP as MCPServer
 
 from zion.export import export_state
 from zion.import_ import import_state
 from zion.recovery import measure_recovery, round_trip_measure
 from zion.state import ZionState, inspect_state
 
-mcp = MCPServer(
-    name="zion",
-    title="Zion - Stato portabile per agenti AI",
-    version="0.1.0",
-    instructions=(
-        "Zion gestisce lo stato portabile degli agenti AI. "
-        "Usa i tools per esportare, importare, ispezionare "
-        "e misurare la qualita' del round-trip di stato."
-    ),
-)
+
+def _create_mcp_server() -> MCPServer:
+    """Crea l'istanza del server MCP compatibile con SDK vecchio e nuovo."""
+    try:
+        return MCPServer(
+            name="zion",
+            title="Zion - Stato portabile per agenti AI",
+            version="0.1.0",
+            instructions=(
+                "Zion gestisce lo stato portabile degli agenti AI. "
+                "Usa i tools per esportare, importare, ispezionare "
+                "e misurare la qualita' del round-trip di stato."
+            ),
+        )
+    except TypeError:
+        return MCPServer(
+            "zion",
+            instructions=(
+                "Zion gestisce lo stato portabile degli agenti AI. "
+                "Usa i tools per esportare, importare, ispezionare "
+                "e misurare la qualita' del round-trip di stato."
+            ),
+        )
+
+
+mcp = _create_mcp_server()
 
 _WORK_DIR = Path(tempfile.gettempdir()) / "zion-mcp"
 

@@ -17,6 +17,20 @@ Il formato si basa su [Keep a Changelog](https://keepachangelog.com/).
   - Entry point `zion-mcp` (console script) con avvio in modalità stdio.
   - Extra `pip install -e ".[mcp]"` per dipendenze opzionali.
   - Istruzioni di configurazione per Claude Desktop in README.
+- **Adattatori funzionanti** per Cheshire Cat AI e DS4.
+  - `CheshireCatAdapter`: estrae conversation, memory, tools, configuration dal database SQLite.
+  - `DS4Adapter`: ridefinito come fornitore LLM locale (non framework agenti).
+  - Classe base `BaseAdapter` con interfaccia standard (inspect, export, import_state).
+- **Migrazione cross-runtime** (`zion.migration`).
+  - `check_compatibility()`: verifica compatibilità stato → runtime destinazione.
+  - `detect_conflicts()`: rileva conflitti tra stati sorgente e destinazione.
+  - `transform_for_target()`: trasforma stato per runtime destinazione.
+  - `migrate()`: migrazione completa con report dettagliato.
+- **Riconciliazione conflitti** (`zion.reconciliation`).
+  - Strategie: `overwrite`, `keep_target`, `merge`.
+  - `selective_merge_strategy`: merge selettivo per dimensione.
+  - Registry estensibile di strategie.
+- **88 test** totali (da 37 iniziali): adapters, migration, reconciliation, MCP server.
 
 ## [0.1.0] - 2025
 

@@ -35,4 +35,24 @@ __all__ = [
     "RecoveryReport",
     "measure_recovery",
     "round_trip_measure",
+    "MigrationReport",
+    "migrate",
+    "check_compatibility",
+    "reconcile",
 ]
+
+
+def __getattr__(name):
+    if name == "MigrationReport":
+        from zion.migration import MigrationReport
+        return MigrationReport
+    if name == "migrate":
+        from zion.migration import migrate
+        return migrate
+    if name == "check_compatibility":
+        from zion.migration import check_compatibility
+        return check_compatibility
+    if name == "reconcile":
+        from zion.reconciliation import reconcile
+        return reconcile
+    raise AttributeError(f"module 'zion' has no attribute '{name}'")
