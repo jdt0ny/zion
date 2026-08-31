@@ -86,6 +86,7 @@ I risultati chiave includono:
 - [x] Indagare Claude Code (architettura file-based — più portabile)
 - [x] Indagare Claude Code (scoperta completa dello stato)
 - [x] Misurare il recupero dello stato
+- [x] Server MCP con strumenti export/import/inspect/measure/round_trip
 - [ ] Indagare la portabilità cross-runtime
 - [ ] Sperimentare la riconciliazione e il conflitto di stato
 - [ ] Implementare adattatori funzionanti
@@ -96,6 +97,49 @@ I risultati chiave includono:
 pip install -e ".[dev]"
 pytest -q
 # 37 test: modelli, serializzazione, round-trip, misurazione recupero
+```
+
+## MCP Server
+
+Zion espone le sue funzionalità come strumenti MCP (Model Context Protocol), permettendo ad agenti AI di gestire lo stato portabile direttamente.
+
+### Installazione
+
+```bash
+pip install -e ".[mcp]"
+```
+
+### Avvio
+
+```bash
+zion-mcp
+```
+
+Il server avvia in modalità stdio — compatibile con Claude Desktop, Cursor, e qualsiasi client MCP.
+
+### Strumenti disponibili
+
+| Tool | Descrizione |
+|------|-------------|
+| `zion_export` | Esporta uno stato Zion su file JSON |
+| `zion_import` | Importa uno stato Zion da file JSON |
+| `zion_inspect` | Riepilogo stato con conteggi portabilità |
+| `zion_measure` | Confronta due stati e misura fedeltà |
+| `zion_round_trip` | Export → import → misura in un solo call |
+
+### Configurazione in Claude Desktop
+
+Aggiungere al file `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "zion": {
+      "command": "zion-mcp",
+      "args": []
+    }
+  }
+}
 ```
 
 ## Modello di Stato
