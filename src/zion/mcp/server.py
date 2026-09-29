@@ -9,6 +9,7 @@ Avvio: python -m zion.mcp.server
 """
 
 import json
+import re
 import tempfile
 from pathlib import Path
 
@@ -75,6 +76,12 @@ def _error(msg: str) -> str:
     return json.dumps({"error": msg})
 
 
+def _safe_filename(value: str) -> str:
+    """Riduce un id a nome file sicuro: niente separatori di percorso."""
+    name = re.sub(r"[^A-Za-z0-9._-]+", "_", value).strip("._")
+    return name or "zion-state"
+
+
 @mcp.tool()
 def zion_export(state_json: str, path: str | None = None) -> str:
     """
@@ -90,8 +97,7 @@ def zion_export(state_json: str, path: str | None = None) -> str:
     state = _parse_state(state_json)
     if path is None:
         work_dir = _ensure_work_dir()
-        name = state.identity.agent_id
-        file_path = work_dir / f"{name}.json"
+        file_path = work_dir / f"{_safe_filename(state.identity.agent_id)}.json"
     else:
         file_path = Path(path)
 
@@ -200,8 +206,7 @@ def zion_round_trip(state_json: str, path: str | None = None) -> str:
 
     if path is None:
         work_dir = _ensure_work_dir()
-        name = state.identity.agent_id
-        file_path = work_dir / f"roundtrip-{name}.json"
+        file_path = work_dir / f"roundtrip-{_safe_filename(state.identity.agent_id)}.json"
     else:
         file_path = Path(path)
 

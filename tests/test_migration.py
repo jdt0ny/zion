@@ -65,6 +65,14 @@ class TestCheckCompatibility:
         compat = check_compatibility(state, "unknown_runtime")
         assert all(c is False for c in compat.values())
 
+    def test_unknown_runtime_matching_current_engine(self):
+        """Se il target sconosciuto e' il runtime corrente, lo stato e' gia' li'."""
+        state = _make_state(
+            runtime={"engine": "custom_engine", "state": "runtime_bound"}
+        )
+        compat = check_compatibility(state, "custom_engine")
+        assert all(c is True for c in compat.values())
+
 
 class TestDetectConflicts:
     """Test per detect_conflicts."""

@@ -1,7 +1,9 @@
 """
 Zion — Stato portabile per agenti AI.
 
-from zion import ZionState, export_state, import_state, inspect_state
+Uso tipico:
+
+    from zion import ZionState, export_state, import_state, inspect_state
 """
 
 from zion.export import export_state

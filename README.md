@@ -102,7 +102,7 @@ I risultati chiave includono:
 ## Avvio rapido
 
 ```bash
-pip install -e ".[dev]"
+uv pip install -e ".[dev]"   # con pip: pip install -e ".[dev]"
 pytest -q
 # 90 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP
 ```
@@ -114,7 +114,7 @@ Zion espone le sue funzionalità come strumenti MCP (Model Context Protocol), pe
 ### Installazione
 
 ```bash
-pip install -e ".[mcp]"
+uv pip install -e ".[mcp]"   # con pip: pip install -e ".[mcp]"
 ```
 
 ### Avvio

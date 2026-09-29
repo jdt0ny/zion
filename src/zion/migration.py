@@ -91,14 +91,19 @@ def check_compatibility(
     """
     Verifica la compatibilita' di uno stato con un runtime destinazione.
 
-    Restituisce un dict dimensione -> compatibile.
+    Restituisce un dict dimensione -> compatibile. Un runtime destinazione
+    assente dalla tabella ma uguale a quello corrente dello stato viene
+    considerato compatibile: non c'e' nessuna migrazione da fare.
     """
     result = {}
+    source_runtime = state.runtime.engine
 
     for dimension in DIMENSION_COMPATIBILITY:
         target_compat = DIMENSION_COMPATIBILITY.get(dimension, {})
         if target_runtime in target_compat:
             result[dimension] = target_compat[target_runtime]
+        elif target_runtime == source_runtime:
+            result[dimension] = True
         else:
             # Runtime sconosciuto: conservativo, marca come non compatibile
             result[dimension] = False

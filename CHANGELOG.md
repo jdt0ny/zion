@@ -36,6 +36,12 @@ Il formato si basa su [Keep a Changelog](https://keepachangelog.com/).
 - **Linter configurato** — `ruff` tra le dev-dependencies con regole esplicite (`E`, `W`, `F`, `I`, `B`, `UP`) in `pyproject.toml`; codice portato a zero errori.
 - `selective_merge` registrata nel registry delle strategie di riconciliazione (prima documentata ma irraggiungibile).
 
+### Corretto
+
+- **`check_compatibility()`** legge ora `state`: un runtime destinazione assente dalla tabella ma uguale a quello corrente dello stato è considerato compatibile (prima il parametro era ignorato).
+- **Path traversal in MCP**: `agent_id` non viene più usato grezzo come nome file in `zion_export` e `zion_round_trip` (`_safe_filename`).
+- **README**: istruzioni di installazione allineate all'ambiente `uv`; docstring di `zion` formattato correttamente.
+
 ## [0.1.0] - 2025
 
 ### Aggiunto

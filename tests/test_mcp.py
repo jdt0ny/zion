@@ -2,11 +2,13 @@
 
 import json
 from datetime import datetime
+from pathlib import Path
 
 import pytest
 
 from zion import AgentIdentity, MemoryEntry, ProjectState, Task, ZionState
 from zion.mcp.server import (
+    _WORK_DIR,
     _parse_state,
     zion_export,
     zion_import,
@@ -79,6 +81,16 @@ class TestZionExport:
         result = json.loads(zion_export(state.model_dump_json(by_alias=True)))
         assert "path" in result
         assert result["bytes"] > 0
+
+    def test_export_default_path_is_sandboxed(self):
+        """Un agent_id con separatori di percorso non deve uscire dalla work dir."""
+        state = _make_state(
+            identity=AgentIdentity(agent_id="../../evil", name="Evil", version="0.1")
+        )
+        result = json.loads(zion_export(state.model_dump_json(by_alias=True)))
+        path = Path(result["path"])
+        assert path.parent == _WORK_DIR
+        assert path.name == "evil.json"
 
 
 class TestZionImport:
