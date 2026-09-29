@@ -15,6 +15,12 @@ dependencies = [
 [project.scripts]
 zion-mcp = "zion.mcp.server:main"
 
+# Da dove setuptools deve raccogliere i pacchetti.
+# Senza questa sezione vale l'auto-discovery: con il src-layout cerca
+# solo dentro src/, e un pacchetto fuori da src/ non finisce nel wheel.
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",

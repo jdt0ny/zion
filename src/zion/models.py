@@ -13,10 +13,7 @@ Ogni elemento ha una classificazione di portabilita':
 from datetime import datetime
 from typing import Literal, Optional
 
-try:
-    from pydantic import BaseModel
-except ImportError:
-    from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 
 # I tre livelli di portabilita' possibili

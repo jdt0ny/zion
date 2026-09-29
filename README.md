@@ -104,7 +104,7 @@ I risultati chiave includono:
 ```bash
 pip install -e ".[dev]"
 pytest -q
-# 88 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP
+# 90 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP
 ```
 
 ## MCP Server

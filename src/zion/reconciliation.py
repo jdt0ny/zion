@@ -142,6 +142,7 @@ STRATEGIES: dict[str, Callable] = {
     "overwrite": overwrite_strategy,
     "keep_target": keep_target_strategy,
     "merge": merge_strategy,
+    "selective_merge": selective_merge_strategy,
 }
 
 

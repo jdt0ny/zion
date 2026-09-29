@@ -16,6 +16,7 @@ from zion.reconciliation import (
     merge_strategy,
     overwrite_strategy,
     keep_target_strategy,
+    selective_merge_strategy,
     get_strategy,
 )
 
@@ -196,3 +197,31 @@ class TestReconciliation:
         )
         result = reconcile(source, None, [], strategy="merge")
         assert len(result.memory) == 1
+
+    def test_selective_merge_is_registered(self):
+        """La strategia dichiarata nel CHANGELOG deve essere raggiungibile per nome."""
+        assert get_strategy("selective_merge") is selective_merge_strategy
+
+    def test_selective_merge_only_where_asked(self):
+        """Preferisce il sorgente SOLO per le dimensioni in prefer_dimensions."""
+        source = _make_state(
+            identity=AgentIdentity(agent_id="src", name="Src", version="1"),
+            memory=[MemoryEntry(id="m1", content="source version", created_at=datetime.now())],
+        )
+        target = _make_state(
+            identity=AgentIdentity(agent_id="tgt", name="Tgt", version="2"),
+            memory=[MemoryEntry(id="m1", content="target version", created_at=datetime.now())],
+        )
+        conflicts = detect_conflicts(source, target)
+        result = reconcile(
+            source,
+            target,
+            conflicts,
+            strategy="selective_merge",
+            prefer_dimensions=["memory"],
+        )
+        # identity non richiesta -> resta il valore del target
+        assert result.identity.agent_id == "tgt"
+        # memory richiesta -> vince il sorgente
+        assert len(result.memory) == 1
+        assert result.memory[0].content == "source version"

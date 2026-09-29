@@ -31,8 +31,6 @@ from zion.models import (
     Message,
     ProjectState,
     RuntimeState,
-    Task,
-    Decision,
 )
 from zion.state import ZionState
 

@@ -94,7 +94,6 @@ def check_compatibility(
     Restituisce un dict dimensione -> compatibile.
     """
     result = {}
-    source_runtime = state.runtime.engine or "unknown"
 
     for dimension in DIMENSION_COMPATIBILITY:
         target_compat = DIMENSION_COMPATIBILITY.get(dimension, {})
