@@ -44,8 +44,20 @@ Il pacchetto core `zion` non ha dipendenze da alcun runtime. Il codice specifico
 
 Componenti:
 - `src/zion/` — core library (modelli, serializzazione, recovery, migration, reconciliation)
-- `adapters/` — adapter per runtime specifici (Cheshire Cat, DS4)
+- `src/adapters/` — adapter per runtime specifici (Cheshire Cat, DS4)
 - `src/zion/mcp/` — server MCP per strumenti agenti
+
+API del core:
+- `inspect_state()` — riepilogo dello stato e della sua portabilità
+- `export_state()` / `import_state()` — scrittura e lettura del JSON
+- `measure_recovery()` — confronta due `ZionState` e misura la fedeltà
+- `round_trip_measure()` — esporta → importa → misura in un colpo solo
+- `migrate()` / `reconcile()` — migrazione cross-runtime e conflitti
+
+Contratto che ogni adattatore implementa (`BaseAdapter`):
+- `inspect()` — riepilogo dello stato disponibile nel runtime
+- `export()` — estrae lo stato in formato `ZionState`
+- `import_state(state)` — carica uno stato Zion nel runtime
 
 ## Statistiche di Portabilità
 
@@ -59,11 +71,11 @@ Ecco la distribuzione degli elementi di stato per categoria di portabilità (bas
 
 **Classificazione Esplicita dello Stato**
 
-Ogni elemento dello stato porta una classificazione di portabilità:
+Ogni elemento dello stato porta una classificazione di portabilità (i valori esatti sono quelli del JSON):
 
-- `portabile`: Può essere serializzato e trasferito indipendentemente dal runtime.
-- `ricostruibile`: Un altro runtime può ricrearlo, ma potrebbe non copiarlo direttamente.
-- `legato_al_runtime`: Dipende dal motore di inferenza, modello, processo o runtime.
+- `portable` (portabile): Può essere serializzato e trasferito indipendentemente dal runtime.
+- `reconstructable` (ricostruibile): Un altro runtime può ricrearlo, ma potrebbe non copiarlo direttamente.
+- `runtime_bound` (legato al runtime): Dipende dal motore di inferenza, modello, processo o runtime.
 
 La classificazione è fondamentale: mai contrassegnare informazioni specifiche del runtime come portabili senza prova.
 
@@ -104,7 +116,7 @@ I risultati chiave includono:
 ```bash
 uv pip install -e ".[dev]"   # con pip: pip install -e ".[dev]"
 pytest -q
-# 90 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP
+# 99 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP
 ```
 
 ## MCP Server
@@ -156,17 +168,17 @@ Il `ZionState` consiste nelle seguenti dimensioni:
 
 ```
 ZionState
-├── schema          # identificatore dello schema
+├── schema          # identificatore dello schema (schema_name nel codice)
 ├── version         # versione dello schema
 ├── identity        # identità dell'agente
 ├── project         # metadati del progetto
-├── conversazione   # cronologia dei messaggi
-├── memoria         # voci di memoria
-├── decisioni       # registro delle decisioni
-├── task            # tracciamento delle attività
-├── strumenti       # definizioni degli strumenti
-├── conoscenza      # voci di conoscenza
-├── configurazione  # configurazione dell'agente
+├── conversation    # cronologia dei messaggi
+├── memory          # voci di memoria
+├── decisions       # registro delle decisioni
+├── tasks           # tracciamento delle attività
+├── tools           # definizioni degli strumenti
+├── knowledge       # voci di conoscenza
+├── configuration   # configurazione dell'agente
 └── runtime         # metadati di runtime
 ```
 

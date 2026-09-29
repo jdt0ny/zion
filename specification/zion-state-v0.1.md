@@ -125,38 +125,44 @@ Core Zion must not depend on any runtime library.
 
 ## 11. Cheshire Cat research
 
-**Status:** UNKNOWN — requires runtime inspection.
+**Status:** COMPLETE (experiment #001) — implemented in `src/adapters/cheshire_cat/`.
 
-| Dimension      | Status    | Notes                         |
-|----------------|-----------|-------------------------------|
-| identity       | UNKNOWN   | Requires runtime inspection   |
-| conversation   | UNKNOWN   | Requires runtime inspection   |
-| memory         | UNKNOWN   | Requires runtime inspection   |
-| decisions      | UNKNOWN   | Requires runtime inspection   |
-| tasks          | UNKNOWN   | Requires runtime inspection   |
-| tools          | UNKNOWN   | Requires runtime inspection   |
-| knowledge      | UNKNOWN   | Requires runtime inspection   |
-| configuration  | UNKNOWN   | Requires runtime inspection   |
-| runtime        | UNKNOWN   | Requires runtime inspection   |
+| Dimension      | Status        | Notes                                              |
+|----------------|---------------|----------------------------------------------------|
+| identity       | SYNTHESISED   | CC has no identity: the user must supply it        |
+| conversation   | MAPPED        | `ChatDB.messages` → `conversation` (portable)      |
+| memory         | MAPPED        | global + per-user key-value stores → `memory`      |
+| decisions      | N/A           | CC has no decisions                                |
+| tasks          | N/A           | CC has no tasks                                    |
+| tools          | MAPPED        | name + JSON schema only (bodies stay in the runtime) |
+| knowledge      | N/A           | CC has no knowledge store                          |
+| configuration  | MAPPED        | plugin settings, `config.py` values, active plugins |
+| runtime        | RUNTIME-BOUND | intentionally excluded from export                |
 
 ## 12. DS4 research
 
-**Status:** UNKNOWN — requires runtime inspection.
+**Status:** COMPLETE (experiment #002) — DS4 is **not** an agent runtime.
 
-| Dimension      | Status    | Notes                         |
-|----------------|-----------|-------------------------------|
-| session        | UNKNOWN   | Requires runtime inspection   |
-| conversation   | UNKNOWN   | Requires runtime inspection   |
-| model          | UNKNOWN   | Requires runtime inspection   |
-| tool metadata  | UNKNOWN   | Requires runtime inspection   |
-| KV/session     | UNKNOWN   | Requires runtime inspection   |
-| runtime        | UNKNOWN   | Requires runtime inspection   |
+DS4 is a local LLM inference engine exposing an OpenAI-compatible API. It has
+no agent state to extract or import: inside a Zion architecture it appears only
+as an inference provider (the same role Ollama would play).
+
+| Dimension      | Status        | Notes                                                |
+|----------------|---------------|------------------------------------------------------|
+| conversation   | N/A           | DS4 does not persist agent conversation              |
+| memory         | N/A           | no agent memory store                                |
+| decisions/tasks| N/A           | not an agent framework                               |
+| KV cache       | RUNTIME-BOUND | binary, tied to engine version, model, quantisation  |
+| model config   | RUNTIME-BOUND | inference parameters, not agent state                |
+| runtime        | RUNTIME-BOUND | GPU, serving process                                 |
 
 ## 13. Known limitations
 
-- No cross-runtime migration implemented.
-- No live runtime integration verified.
-- Adapters are research boundaries, not production connectors.
+- Cross-runtime migration is implemented and tested, but only exercised
+  against stub adapters — never between two live runtimes.
+- Adapters have not been verified against a real Cheshire Cat database or a
+  running DS4 server.
+- Adapters are research-backed connectors, not production-hardened.
 - Real-time state synchronization is out of scope.
 - DSL or query language for state inspection is not yet explored.
 
