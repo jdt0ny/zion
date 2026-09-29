@@ -13,10 +13,7 @@ import re
 import tempfile
 from pathlib import Path
 
-try:
-    from mcp.server.mcpserver import MCPServer
-except ImportError:  # pragma: no cover
-    from mcp.server.fastmcp import FastMCP as MCPServer
+from mcp.server.mcpserver import MCPServer
 
 from zion.export import export_state
 from zion.import_ import import_state

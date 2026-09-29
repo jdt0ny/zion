@@ -22,6 +22,7 @@ Limitazioni:
 
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 
 from adapters.base import BaseAdapter
@@ -201,7 +202,7 @@ class CheshireCatAdapter(BaseAdapter):
                             Message(
                                 role=role,
                                 content=content,
-                                created_at="1970-01-01T00:00:00",
+                                created_at=datetime(1970, 1, 1),
                             )
                         )
         except Exception:
@@ -248,7 +249,7 @@ class CheshireCatAdapter(BaseAdapter):
                         content=json.dumps(
                             {"key": row["name"], "value": row["value"]}
                         ),
-                        created_at="1970-01-01T00:00:00",
+                        created_at=datetime(1970, 1, 1),
                         portability="portable",
                     )
                 )
@@ -270,7 +271,7 @@ class CheshireCatAdapter(BaseAdapter):
                             content=json.dumps(
                                 {"key": row["name"], "value": row["value"]}
                             ),
-                            created_at="1970-01-01T00:00:00",
+                            created_at=datetime(1970, 1, 1),
                             portability="portable",
                         )
                     )

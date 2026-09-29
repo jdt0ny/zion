@@ -4,10 +4,12 @@ from datetime import datetime
 
 import pytest
 
+from adapters.base import BaseAdapter
 from zion import AgentIdentity, MemoryEntry, ProjectState, ZionState
 from zion.migration import (
     check_compatibility,
     detect_conflicts,
+    migrate,
     transform_for_target,
 )
 from zion.reconciliation import (
@@ -25,6 +27,30 @@ def _make_state(**overrides) -> ZionState:
     )
     defaults.update(overrides)
     return ZionState(**defaults)
+
+
+class _StubAdapter(BaseAdapter):
+    """Adattatore fittizio: permette di forzare ogni ramo di migrate()."""
+
+    def __init__(self, runtime, state, fail_export=False, fail_import=False):
+        self.runtime = runtime
+        self.state = state
+        self.fail_export = fail_export
+        self.fail_import = fail_import
+        self.imported = None
+
+    def inspect(self) -> dict:
+        return {"runtime": self.runtime}
+
+    def export(self) -> ZionState:
+        if self.fail_export:
+            raise RuntimeError("export rotto")
+        return self.state
+
+    def import_state(self, state: ZionState) -> None:
+        if self.fail_import:
+            raise RuntimeError("import rotto")
+        self.imported = state
 
 
 class TestCheckCompatibility:
@@ -229,3 +255,67 @@ class TestReconciliation:
         # memory richiesta -> vince il sorgente
         assert len(result.memory) == 1
         assert result.memory[0].content == "source version"
+
+
+class TestMigrate:
+    """Test per migrate(): i sei passi del workflow di migrazione."""
+
+    def test_migrate_success(self):
+        source = _StubAdapter(
+            "cheshire_cat",
+            _make_state(memory=[MemoryEntry(id="m1", content="src", created_at=datetime.now())]),
+        )
+        target = _StubAdapter(
+            "cheshire_cat",
+            _make_state(memory=[MemoryEntry(id="m2", content="tgt", created_at=datetime.now())]),
+        )
+
+        report = migrate(source, target)
+
+        assert report.success is True
+        assert report.source_runtime == "cheshire_cat"
+        assert report.target_runtime == "cheshire_cat"
+        assert "identity" in report.dimensions_migrated
+        # CC non persiste decisions/tasks/knowledge -> scartate e segnalate
+        assert "decisions" in report.dimensions_skipped
+        assert any("decisions" in w for w in report.warnings)
+        assert target.imported is not None
+        assert target.imported.runtime.engine == "cheshire_cat"
+
+    def test_migrate_export_failure(self):
+        source = _StubAdapter("cheshire_cat", _make_state(), fail_export=True)
+        target = _StubAdapter("cheshire_cat", _make_state())
+
+        report = migrate(source, target)
+
+        assert report.success is False
+        assert any("Export fallito" in w for w in report.warnings)
+
+    def test_migrate_import_failure(self):
+        source = _StubAdapter("cheshire_cat", _make_state())
+        target = _StubAdapter("cheshire_cat", _make_state(), fail_import=True)
+
+        report = migrate(source, target)
+
+        assert report.success is False
+        assert any("Import fallito" in w for w in report.warnings)
+
+    def test_migrate_resolves_conflicts(self):
+        source_state = _make_state(
+            memory=[MemoryEntry(id="m1", content="dal sorgente", created_at=datetime.now())]
+        )
+        target_state = _make_state(
+            memory=[MemoryEntry(id="m1", content="dal destinatario", created_at=datetime.now())]
+        )
+        source = _StubAdapter("cheshire_cat", source_state)
+        target = _StubAdapter("cheshire_cat", target_state)
+
+        report = migrate(
+            source,
+            target,
+            resolve_conflicts_fn=lambda src, tgt, conflicts: src,
+        )
+
+        assert len(report.conflicts_found) == 1
+        assert report.conflicts_found[0]["dimension"] == "memory"
+        assert report.conflicts_resolved == report.conflicts_found

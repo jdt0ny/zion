@@ -159,14 +159,14 @@ def detect_conflicts(
 
     # Confronta tool
     if source_state.tools and target_state.tools:
-        source_names = {t.get("name") for t in source_state.tools}
-        target_names = {t.get("name") for t in target_state.tools}
-        overlapping = source_names & target_names
-        if overlapping:
+        source_tool_names = {t.get("name") for t in source_state.tools}
+        target_tool_names = {t.get("name") for t in target_state.tools}
+        tool_overlap = source_tool_names & target_tool_names
+        if tool_overlap:
             conflicts.append(Conflict(
                 dimension="tools",
-                source_value=f"{len(source_names)} tool",
-                target_value=f"{len(target_names)} tool",
+                source_value=f"{len(source_tool_names)} tool",
+                target_value=f"{len(target_tool_names)} tool",
                 conflict_type="overwrite",
             ))
 
