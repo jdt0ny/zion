@@ -1,7 +1,5 @@
-import pytest
-from pathlib import Path
-
 from datetime import datetime
+from pathlib import Path
 
 from zion.models import (
     AgentIdentity,
@@ -12,8 +10,8 @@ from zion.models import (
     RuntimeState,
     Task,
 )
+from zion.recovery import RecoveryReport, _count_leaves, measure_recovery, round_trip_measure
 from zion.state import ZionState
-from zion.recovery import RecoveryReport, measure_recovery, round_trip_measure, _count_leaves
 
 
 def _full_state() -> ZionState:
@@ -26,23 +24,46 @@ def _full_state() -> ZionState:
             description="A test project",
         ),
         conversation=[
-            Message(role="system", content="You are a test agent.", created_at="2026-01-01T00:00:00"),
+            Message(
+                role="system",
+                content="You are a test agent.",
+                created_at="2026-01-01T00:00:00",
+            ),
             Message(role="user", content="Hello", created_at="2026-01-01T00:00:01"),
             Message(role="assistant", content="Hi there", created_at="2026-01-01T00:00:02"),
         ],
         memory=[
             MemoryEntry(id="m1", content="Fact one", created_at="2026-01-01T00:00:00"),
-            MemoryEntry(id="m2", content="Fact two", created_at="2026-01-01T00:00:01", portability="reconstructable"),
+            MemoryEntry(
+                id="m2",
+                content="Fact two",
+                created_at="2026-01-01T00:00:01",
+                portability="reconstructable",
+            ),
         ],
         decisions=[
-            Decision(id="d1", title="Approach", decision="Use TDD", created_at="2026-01-01T00:00:00"),
+            Decision(
+                id="d1",
+                title="Approach",
+                decision="Use TDD",
+                created_at="2026-01-01T00:00:00",
+            ),
         ],
         tasks=[
-            Task(id="t1", title="Implement recovery", status="in_progress", created_at="2026-01-01T00:00:00"),
+            Task(
+                id="t1",
+                title="Implement recovery",
+                status="in_progress",
+                created_at="2026-01-01T00:00:00",
+            ),
             Task(id="t2", title="Write tests", status="pending", created_at="2026-01-01T00:00:01"),
         ],
         tools=[
-            {"name": "search", "description": "Search files", "parameters": {"type": "object", "properties": {"query": {"type": "string"}}}},
+            {
+                "name": "search",
+                "description": "Search files",
+                "parameters": {"type": "object", "properties": {"query": {"type": "string"}}},
+            },
         ],
         knowledge=[
             {"topic": "python", "content": "Python is a programming language"},

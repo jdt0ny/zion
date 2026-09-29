@@ -4,6 +4,8 @@ Zion — Stato portabile per agenti AI.
 from zion import ZionState, export_state, import_state, inspect_state
 """
 
+from zion.export import export_state
+from zion.import_ import import_state
 from zion.models import (
     AgentIdentity,
     Decision,
@@ -14,10 +16,8 @@ from zion.models import (
     RuntimeState,
     Task,
 )
-from zion.state import ZionState, inspect_state
-from zion.export import export_state
-from zion.import_ import import_state
 from zion.recovery import RecoveryReport, measure_recovery, round_trip_measure
+from zion.state import ZionState, inspect_state
 
 __all__ = [
     "AgentIdentity",

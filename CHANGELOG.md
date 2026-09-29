@@ -33,6 +33,7 @@ Il formato si basa su [Keep a Changelog](https://keepachangelog.com/).
 - **90 test** totali (da 37 iniziali): adapters, migration, reconciliation, MCP server.
 - **Packaging corretto**: `adapters` spostato in `src/` e pacchetti dichiarati esplicitamente in `pyproject.toml` — ora finiscono nel wheel.
 - Rimossi i moduli orfani `zion.storage` e `zion.events` e il fallback `pydantic.v1` in `zion.models` (mai funzionante: il resto del codice usa API v2).
+- **Linter configurato** — `ruff` tra le dev-dependencies con regole esplicite (`E`, `W`, `F`, `I`, `B`, `UP`) in `pyproject.toml`; codice portato a zero errori.
 - `selective_merge` registrata nel registry delle strategie di riconciliazione (prima documentata ma irraggiungibile).
 
 ## [0.1.0] - 2025

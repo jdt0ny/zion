@@ -94,7 +94,7 @@ def _deep_compare(a: Any, b: Any, path: str) -> tuple[int, int, list[str]]:
     """
     losses: list[str] = []
 
-    if type(a) != type(b):
+    if type(a) is not type(b):
         return 1, 0, [path]
 
     if isinstance(a, dict):
@@ -112,24 +112,27 @@ def _deep_compare(a: Any, b: Any, path: str) -> tuple[int, int, list[str]]:
                 checked += c
                 losses.append(sub_path)
             else:
-                c, r, l = _deep_compare(a[key], b[key], sub_path)
+                c, r, lost = _deep_compare(a[key], b[key], sub_path)
                 checked += c
                 recovered += r
-                losses.extend(l)
+                losses.extend(lost)
         return checked, recovered, losses
 
     if isinstance(a, (list, tuple)):
         if len(a) != len(b):
-            checked = sum(_count_leaves(item) for item in a) + sum(_count_leaves(item) for item in b)
+            checked = (
+                sum(_count_leaves(item) for item in a)
+                + sum(_count_leaves(item) for item in b)
+            )
             return checked, 0, [f"{path} (length {len(a)} → {len(b)})"]
         checked = 0
         recovered = 0
-        for i, (item_a, item_b) in enumerate(zip(a, b)):
+        for i, (item_a, item_b) in enumerate(zip(a, b, strict=False)):
             sub_path = f"{path}[{i}]"
-            c, r, l = _deep_compare(item_a, item_b, sub_path)
+            c, r, lost = _deep_compare(item_a, item_b, sub_path)
             checked += c
             recovered += r
-            losses.extend(l)
+            losses.extend(lost)
         return checked, recovered, losses
 
     # Valore scalare — confronto con tolleranza ai microsecondi

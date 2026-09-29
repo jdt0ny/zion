@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from zion.export import export_state
+from zion.import_ import import_state
 from zion.models import (
     AgentIdentity,
     Decision,
@@ -10,8 +12,6 @@ from zion.models import (
     Task,
 )
 from zion.state import ZionState
-from zion.export import export_state
-from zion.import_ import import_state
 
 
 def build_representative_state() -> ZionState:
@@ -68,11 +68,23 @@ def build_representative_state() -> ZionState:
             ),
         ],
         conversation=[
-            Message(role="system", content="You are Zion, an AI agent.", created_at="2026-01-01T00:00:00"),
+            Message(
+                role="system",
+                content="You are Zion, an AI agent.",
+                created_at="2026-01-01T00:00:00",
+            ),
             Message(role="user", content="What is the goal?", created_at="2026-01-01T00:00:01"),
-            Message(role="assistant", content="AI agent state portability.", created_at="2026-01-01T00:00:02"),
+            Message(
+                role="assistant",
+                content="AI agent state portability.",
+                created_at="2026-01-01T00:00:02",
+            ),
             Message(role="user", content="Where do we start?", created_at="2026-01-01T00:00:03"),
-            Message(role="assistant", content="With Cheshire Cat.", created_at="2026-01-01T00:00:04"),
+            Message(
+                role="assistant",
+                content="With Cheshire Cat.",
+                created_at="2026-01-01T00:00:04",
+            ),
         ],
         tools=[
             {

@@ -17,6 +17,6 @@ def import_state(path: Path) -> ZionState:
     Lancia un'eccezione se il file non esiste o se il JSON
     non corrisponde allo schema ZionState.
     """
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         data = json.load(f)
     return ZionState.model_validate(data)

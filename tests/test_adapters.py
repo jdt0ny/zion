@@ -1,13 +1,11 @@
 """Test per gli adapter Zion."""
 
-from datetime import datetime
 
 import pytest
 
-from adapters import BaseAdapter, CheshireCatAdapter, DS4Adapter
+from adapters import CheshireCatAdapter, DS4Adapter
 from adapters.base import BaseAdapter
-from zion import ZionState, AgentIdentity, ProjectState, MemoryEntry
-from zion.state import ZionState
+from zion import AgentIdentity, ProjectState, ZionState
 
 
 class TestBaseAdapter:

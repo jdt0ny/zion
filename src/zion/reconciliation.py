@@ -12,10 +12,9 @@ Strategie disponibili:
   - manual: richiede decisione manuale
 """
 
-from typing import Any, Callable
+from collections.abc import Callable
 
 from zion.migration import Conflict
-from zion.models import MemoryEntry
 from zion.state import ZionState
 
 

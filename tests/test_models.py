@@ -3,10 +3,8 @@ from pydantic import ValidationError
 
 from zion.models import (
     AgentIdentity,
-    Decision,
     MemoryEntry,
     Message,
-    Portability,
     ProjectState,
     RuntimeState,
     Task,
