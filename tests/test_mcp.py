@@ -92,6 +92,27 @@ class TestZionExport:
         assert path.parent == _WORK_DIR
         assert path.name == "evil.json"
 
+    def test_export_rejects_path_outside_roots(self):
+        """Un path fuori da /tmp, cwd e home non viene toccato."""
+        state = _make_state()
+        result = json.loads(zion_export(
+            state.model_dump_json(by_alias=True),
+            path="/etc/zion-denied.json",
+        ))
+        assert "error" in result
+        assert "non consentito" in result["error"]
+
+    def test_export_resolves_traversal_before_checking(self):
+        """Le .. vengono normalizzate prima del confronto con le root."""
+        state = _make_state()
+        trick = str(_WORK_DIR / ".." / ".." / ".." / "etc" / "zion.json")
+        result = json.loads(zion_export(
+            state.model_dump_json(by_alias=True),
+            path=trick,
+        ))
+        assert "error" in result
+        assert "non consentito" in result["error"]
+
 
 class TestZionImport:
     """Test per zion_import."""
@@ -112,6 +133,12 @@ class TestZionImport:
     def test_import_nonexistent_file(self):
         result = json.loads(zion_import("/tmp/non-esiste.json"))
         assert "error" in result
+
+    def test_import_rejects_path_outside_roots(self):
+        """La lettura è protetta quanto la scrittura."""
+        result = json.loads(zion_import("/etc/passwd"))
+        assert "error" in result
+        assert "non consentito" in result["error"]
 
 
 class TestZionMeasure:

@@ -79,6 +79,26 @@ def _safe_filename(value: str) -> str:
     return name or "zion-state"
 
 
+def _allowed_roots() -> list[Path]:
+    """Root dentro le quali un path esplicito viene accettato."""
+    return [Path(tempfile.gettempdir()), Path.cwd(), Path.home()]
+
+
+def _resolve_allowed_path(value: str) -> Path | None:
+    """Risolve il path e lo accetta solo se cade dentro una root consentita."""
+    candidate = Path(value).expanduser().resolve()
+    for root in _allowed_roots():
+        if candidate.is_relative_to(root.resolve()):
+            return candidate
+    return None
+
+
+def _path_error(value: str) -> str:
+    """Errore JSON per un path fuori dalle root consentite."""
+    roots = ", ".join(str(root) for root in _allowed_roots())
+    return _error(f"Path non consentito: {value}. Root ammesse: {roots}")
+
+
 @mcp.tool()
 def zion_export(state_json: str, path: str | None = None) -> str:
     """
@@ -96,7 +116,10 @@ def zion_export(state_json: str, path: str | None = None) -> str:
         work_dir = _ensure_work_dir()
         file_path = work_dir / f"{_safe_filename(state.identity.agent_id)}.json"
     else:
-        file_path = Path(path)
+        resolved = _resolve_allowed_path(path)
+        if resolved is None:
+            return _path_error(path)
+        file_path = resolved
 
     try:
         export_state(state, file_path)
@@ -122,7 +145,11 @@ def zion_import(path: str) -> str:
     Returns:
         Stato Zion deserializzato.
     """
-    file_path = Path(path)
+    resolved = _resolve_allowed_path(path)
+    if resolved is None:
+        return _path_error(path)
+
+    file_path = resolved
     if not file_path.exists():
         return _error(f"File non trovato: {path}")
 
@@ -205,7 +232,10 @@ def zion_round_trip(state_json: str, path: str | None = None) -> str:
         work_dir = _ensure_work_dir()
         file_path = work_dir / f"roundtrip-{_safe_filename(state.identity.agent_id)}.json"
     else:
-        file_path = Path(path)
+        resolved = _resolve_allowed_path(path)
+        if resolved is None:
+            return _path_error(path)
+        file_path = resolved
 
     try:
         report = round_trip_measure(state, file_path)
