@@ -42,7 +42,8 @@ Il formato si basa su [Keep a Changelog](https://keepachangelog.com/).
   - Strategie: `overwrite`, `keep_target`, `merge`.
   - `selective_merge_strategy`: merge selettivo per dimensione.
   - Registry estensibile di strategie.
-- **132 test** totali (da 37 iniziali): adapters, migration, reconciliation, MCP server, memoria episodica, scrittura in esecuzione. Portata di copertura all'88% con soglia minima dell'80% e typecheck `mypy` su `src/`.
+- **Sessione MCP end-to-end** (`tests/test_mcp_stdio.py`): il server viene avviato come processo reale con `python -m zion.mcp.server`, i tool vengono invocati negoziando il protocollo MCP su stdio, e la persistenza del ricordo viene verificata dopo il riavvio del processo — senza export. È la prova del ciclo di vita, non della libreria.
+- **135 test** totali (da 37 iniziali): adapters, migration, reconciliation, MCP server, memoria episodica, scrittura in esecuzione. Portata di copertura all'88% con soglia minima dell'80% e typecheck `mypy` su `src/`.
 - **Packaging corretto**: `adapters` spostato in `src/` e pacchetti dichiarati esplicitamente in `pyproject.toml` — ora finiscono nel wheel.
 - Rimossi i moduli orfani `zion.storage` e `zion.events` e il fallback `pydantic.v1` in `zion.models` (mai funzionante: il resto del codice usa API v2).
 - **Linter configurato** — `ruff` tra le dev-dependencies con regole esplicite (`E`, `W`, `F`, `I`, `B`, `UP`) in `pyproject.toml`; codice portato a zero errori.
@@ -54,6 +55,7 @@ Il formato si basa su [Keep a Changelog](https://keepachangelog.com/).
 - **Path traversal in MCP**: `agent_id` non viene più usato grezzo come nome file in `zion_export` e `zion_round_trip` (`_safe_filename`).
 - **Path espliciti MCP limitati alle root consentite**: `zion_export`, `zion_import` e `zion_round_trip` accettano un percorso solo se, normalizzato e risolto, cade sotto `/tmp`, la working directory o l'home. I segmenti `..` vengono normalizzati prima del confronto e l'errore elenca le root ammesse (prima un client MCP poteva leggere o scrivere ovunque su disco).
 - **README**: istruzioni di installazione allineate all'ambiente `uv`; docstring di `zion` formattato correttamente.
+- **Doppia esecuzione del server**: `zion.mcp.__init__` importava il server in eager, così `python -m zion.mcp.server` eseguiva il modulo due volte (avviso di runpy). Import lazy, come già faceva `zion.__init__`.
 
 ## [0.1.0] - 2025
 

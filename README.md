@@ -119,7 +119,7 @@ I risultati chiave includono:
 ```bash
 uv pip install -e ".[dev]"   # con pip: pip install -e ".[dev]"
 pytest -q
-# 132 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP, memoria v0.2
+# 135 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP, memoria v0.2
 ```
 
 ## MCP Server
