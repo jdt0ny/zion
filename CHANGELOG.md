@@ -40,6 +40,7 @@ Il formato si basa su [Keep a Changelog](https://keepachangelog.com/).
 
 - **`check_compatibility()`** legge ora `state`: un runtime destinazione assente dalla tabella ma uguale a quello corrente dello stato è considerato compatibile (prima il parametro era ignorato).
 - **Path traversal in MCP**: `agent_id` non viene più usato grezzo come nome file in `zion_export` e `zion_round_trip` (`_safe_filename`).
+- **Path espliciti MCP limitati alle root consentite**: `zion_export`, `zion_import` e `zion_round_trip` accettano un percorso solo se, normalizzato e risolto, cade sotto `/tmp`, la working directory o l'home. I segmenti `..` vengono normalizzati prima del confronto e l'errore elenca le root ammesse (prima un client MCP poteva leggere o scrivere ovunque su disco).
 - **README**: istruzioni di installazione allineate all'ambiente `uv`; docstring di `zion` formattato correttamente.
 
 ## [0.1.0] - 2025
