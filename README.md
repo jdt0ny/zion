@@ -110,6 +110,7 @@ I risultati chiave includono:
 - [x] Migrazione cross-runtime con verifica compatibilità
 - [x] Riconciliazione conflitti di stato (overwrite, merge, keep_target)
 - [x] Memoria episodica strutturata e conoscenza tipizzata (Zion State v0.2)
+- [x] Ciclo di vita in esecuzione: `zion_remember` / `zion_recall` sul server MCP
 - [x] Test specifici per adapter, migration, MCP server
 - [ ] Indagare la portabilità cross-runtime
 
@@ -118,7 +119,7 @@ I risultati chiave includono:
 ```bash
 uv pip install -e ".[dev]"   # con pip: pip install -e ".[dev]"
 pytest -q
-# 114 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP, memoria v0.2
+# 132 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP, memoria v0.2
 ```
 
 ## MCP Server
@@ -148,6 +149,13 @@ Il server avvia in modalità stdio — compatibile con Claude Desktop, Cursor, e
 | `zion_inspect` | Riepilogo stato con conteggi portabilità |
 | `zion_measure` | Confronta due stati e misura fedeltà |
 | `zion_round_trip` | Export → import → misura in un solo call |
+| `zion_remember` | Annota un ricordo nello stato vivo dell'agente, mentre agisce |
+| `zion_recall` | Cerca nei ricordi per testo e li restituisce ordinati per salienza |
+
+I primi cinque strumenti spostano uno stato già costruito; gli ultimi due lo fanno vivere:
+`zion_remember` salva subito nel file di stato dell'agente — nessun export preliminare — e
+`zion_recall` lo richiama per testo (maiuscole/minuscole ignorate, query vuota = più salienti).
+L'export resta un'operazione di **distribuzione**, non di salvataggio.
 
 ### Configurazione in Claude Desktop
 

@@ -15,6 +15,10 @@ Il formato si basa su [Keep a Changelog](https://keepachangelog.com/).
   - `inspect_state()` riporta `dangling_memory_links`: un link verso un ricordo assente è lecito (export parziale) ma va contato.
 - **`KnowledgeEntry`** — `knowledge` non è più un `list[dict]`: fatti tipizzati distinti dai ricordi (nessun `occurred_at` né `salience`) e con i campi extra delle voci legacy conservati, per non perdere fedeltà.
 - **Compatibilità v0.1**: un documento v0.1 valida come v0.2 senza modifiche (`occurred_at` ricavato da `created_at`) e il caricamento non riscrive `version`. Fedeltà round-trip 1.0 su entrambi.
+- **Scrittura in esecuzione** — due nuovi tool MCP, il ciclo non passa più dall'export.
+  - `zion_remember`: annota un ricordo nel file di stato vivo dell'agente (creandolo se assente) con `context`, `salience` e `occurred_at` opzionali; validazione prima della scrittura, quindi un ricordo non valido non lascia residui.
+  - `zion_recall`: ricerca testuale su contenuti e contesti, ordinata per salienza e data, con `limit`; query vuota = ricordi più salienti. Nessun embedding: la ricerca resta testuale per scelta.
+  - `agent_id` sanificato anche qui (`_safe_filename`): il posto in cui si salva non è scelto dal chiamante.
 - **Specifiche**: `specification/zion-state-v0.2.md` descrive il nuovo modello; `zion-state-v0.1.md` resta come snapshot storico.
 - **Server MCP** — strumenti MCP (Model Context Protocol) per gestire lo stato portabile degli agenti AI.
   - `zion_export`: esporta uno stato Zion su file JSON.
@@ -38,7 +42,7 @@ Il formato si basa su [Keep a Changelog](https://keepachangelog.com/).
   - Strategie: `overwrite`, `keep_target`, `merge`.
   - `selective_merge_strategy`: merge selettivo per dimensione.
   - Registry estensibile di strategie.
-- **114 test** totali (da 37 iniziali): adapters, migration, reconciliation, MCP server, memoria episodica. Portata di copertura all'88% con soglia minima dell'80% e typecheck `mypy` su `src/`.
+- **132 test** totali (da 37 iniziali): adapters, migration, reconciliation, MCP server, memoria episodica, scrittura in esecuzione. Portata di copertura all'88% con soglia minima dell'80% e typecheck `mypy` su `src/`.
 - **Packaging corretto**: `adapters` spostato in `src/` e pacchetti dichiarati esplicitamente in `pyproject.toml` — ora finiscono nel wheel.
 - Rimossi i moduli orfani `zion.storage` e `zion.events` e il fallback `pydantic.v1` in `zion.models` (mai funzionante: il resto del codice usa API v2).
 - **Linter configurato** — `ruff` tra le dev-dependencies con regole esplicite (`E`, `W`, `F`, `I`, `B`, `UP`) in `pyproject.toml`; codice portato a zero errori.
