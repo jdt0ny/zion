@@ -11,7 +11,9 @@ from zion.import_ import import_state
 from zion.models import (
     AgentIdentity,
     Decision,
+    KnowledgeEntry,
     MemoryEntry,
+    MemoryLink,
     Message,
     Portability,
     ProjectState,
@@ -24,7 +26,9 @@ from zion.state import ZionState, inspect_state
 __all__ = [
     "AgentIdentity",
     "Decision",
+    "KnowledgeEntry",
     "MemoryEntry",
+    "MemoryLink",
     "Message",
     "Portability",
     "ProjectState",

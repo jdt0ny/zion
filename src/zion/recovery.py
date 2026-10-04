@@ -165,7 +165,8 @@ def measure_recovery(original: ZionState, recovered: ZionState) -> RecoveryRepor
         ("tasks", [t.model_dump() for t in original.tasks],
          [t.model_dump() for t in recovered.tasks]),
         ("tools", original.tools, recovered.tools),
-        ("knowledge", original.knowledge, recovered.knowledge),
+        ("knowledge", [k.model_dump() for k in original.knowledge],
+         [k.model_dump() for k in recovered.knowledge]),
         ("configuration", original.configuration, recovered.configuration),
         ("runtime", original.runtime.model_dump(), recovered.runtime.model_dump()),
     ]

@@ -1,5 +1,9 @@
 # Zion State v0.1
 
+> **Superseded by `zion-state-v0.2.md`.** Kept as the historical snapshot
+> of the v0.1 schema: documents written against this version remain valid
+> under v0.2 (additive change, see v0.2 §7).
+
 > Experimental specification for runtime-independent AI agent state.
 
 ## 1. Motivation

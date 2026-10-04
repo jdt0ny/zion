@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field
 from zion.models import (
     AgentIdentity,
     Decision,
+    KnowledgeEntry,
     MemoryEntry,
     Message,
     ProjectState,
@@ -42,7 +43,7 @@ class ZionState(BaseModel):
         serialization_alias="schema",
         validation_alias="schema",
     )
-    version: str = "0.1"
+    version: str = "0.2"
 
     identity: AgentIdentity
     project: ProjectState
@@ -53,7 +54,7 @@ class ZionState(BaseModel):
     tasks: list[Task] = Field(default_factory=list)
 
     tools: list[dict[str, Any]] = Field(default_factory=list)
-    knowledge: list[dict[str, Any]] = Field(default_factory=list)
+    knowledge: list[KnowledgeEntry] = Field(default_factory=list)
     configuration: dict[str, Any] = Field(default_factory=dict)
 
     runtime: RuntimeState = Field(default_factory=RuntimeState)
@@ -67,10 +68,19 @@ def inspect_state(state: ZionState) -> dict:
     - identita' e progetto
     - quanti elementi ci sono per ogni dimensione
     - un sommario di portabilita' (portatile / ricostruibile / legato al runtime)
+    - quanti links di memoria puntano a ricordi assenti (export parziale)
     """
     conta_portabile = 0
     conta_ricostruibile = 0
     conta_legato_al_runtime = 0
+
+    ids_memoria = {entry.id for entry in state.memory}
+    link_sospesi = sum(
+        1
+        for entry in state.memory
+        for link in entry.links
+        if link.target not in ids_memoria
+    )
 
     # Conta la portabilita' delle memorie
     for entry in state.memory:
@@ -116,6 +126,7 @@ def inspect_state(state: ZionState) -> dict:
         "task_count": len(state.tasks),
         "tool_count": len(state.tools),
         "knowledge_count": len(state.knowledge),
+        "dangling_memory_links": link_sospesi,
         "runtime": state.runtime.model_dump(),
         "portability_summary": {
             "portable": conta_portabile,

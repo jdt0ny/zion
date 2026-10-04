@@ -46,7 +46,7 @@ class TestSerialization:
 
         data = json.loads(raw)
         assert data["schema"] == "zion-state"
-        assert data["version"] == "0.1"
+        assert data["version"] == "0.2"
         assert "\n" in raw
 
     def test_empty_collections_survive_round_trip(self, tmp_path: Path):

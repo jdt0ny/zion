@@ -19,7 +19,7 @@ class TestModels:
             project=ProjectState(id="p1", name="test-project"),
         )
         assert state.schema_name == "zion-state"
-        assert state.version == "0.1"
+        assert state.version == "0.2"
 
     def test_default_collections(self):
         state = ZionState(

@@ -250,6 +250,7 @@ class CheshireCatAdapter(BaseAdapter):
                             {"key": row["name"], "value": row["value"]}
                         ),
                         created_at=datetime(1970, 1, 1),
+                        occurred_at=datetime(1970, 1, 1),
                         portability="portable",
                     )
                 )
@@ -272,6 +273,7 @@ class CheshireCatAdapter(BaseAdapter):
                                 {"key": row["name"], "value": row["value"]}
                             ),
                             created_at=datetime(1970, 1, 1),
+                            occurred_at=datetime(1970, 1, 1),
                             portability="portable",
                         )
                     )

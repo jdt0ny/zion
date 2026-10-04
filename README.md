@@ -19,7 +19,7 @@ Zion è un progetto sperimentale open-source che indaga la **portabilità dello 
 - Non è un database vettoriale o prodotto di memoria.
 - Non è un servizio cloud o API.
 - Non è un sostituto per alcun runtime — li completa.
-- Non tenta la migrazione cross-runtime in tempo reale (v0.1 è solo scoperta a singolo runtime).
+- Non tenta la migrazione cross-runtime in tempo reale: la migrazione esiste ed è testata, ma resta un'operazione esplicita, non una sincronizzazione continua.
 
 ## Perché è importante
 
@@ -81,13 +81,14 @@ La classificazione è fondamentale: mai contrassegnare informazioni specifiche d
 
 ## Stato attuale
 
-**Ricerca / Sperimentale** — v0.1
+**Ricerca / Sperimentale** — v0.2
 
 Modello di stato definito, serializzazione JSON funzionante, confini degli adattatori tracciati, misurazione del recupero stato implementata. Completate quattro esperimentazioni di ricerca su diversi runtime.
 
 I risultati chiave includono:
 
-- **ZionState v0.1** specificato con successo e testato per la fedeltà round-trip JSON
+- **ZionState v0.2** specificato (`specification/zion-state-v0.2.md`) e testato per la fedeltà round-trip JSON, in modo retrocompatibile con i documenti v0.1
+- **Memoria episodica** — `MemoryEntry` con `occurred_at`, `salience` (0–1), `context` e `links[]` tipizzati; `knowledge` distinto da `memory` come `KnowledgeEntry`
 - **Misurazione del recupero** con `RecoveryReport` — confronto field-by-field profondo con fedeltà per dimensione e punteggio complessivo
 - **Adattatore Cheshire Cat** progettato per estrarre: storia delle conversazioni (JSON), dati key-value (globali e per utente), manifesti dei plugin, configurazione dei plugin, elenco dei plugin attivi, definizioni degli strumenti (nome + schema JSON)
 - **Adattatore DS4** ridefinito come fornitore LLM piuttosto che come estratore di stato agente — DS4 fornisce inferenza locale tramite la sua API OpenAI-compatibile, non stato agente portabile
@@ -108,6 +109,7 @@ I risultati chiave includono:
 - [x] Implementare adattatori funzionanti (Cheshire Cat, DS4)
 - [x] Migrazione cross-runtime con verifica compatibilità
 - [x] Riconciliazione conflitti di stato (overwrite, merge, keep_target)
+- [x] Memoria episodica strutturata e conoscenza tipizzata (Zion State v0.2)
 - [x] Test specifici per adapter, migration, MCP server
 - [ ] Indagare la portabilità cross-runtime
 
@@ -116,7 +118,7 @@ I risultati chiave includono:
 ```bash
 uv pip install -e ".[dev]"   # con pip: pip install -e ".[dev]"
 pytest -q
-# 99 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP
+# 114 test: modelli, serializzazione, round-trip, recovery, adapter, migration, MCP, memoria v0.2
 ```
 
 ## MCP Server
@@ -173,11 +175,11 @@ ZionState
 ├── identity        # identità dell'agente
 ├── project         # metadati del progetto
 ├── conversation    # cronologia dei messaggi
-├── memory          # voci di memoria
+├── memory          # voci di memoria episodica (occurred_at, salience, context, links)
 ├── decisions       # registro delle decisioni
 ├── tasks           # tracciamento delle attività
 ├── tools           # definizioni degli strumenti
-├── knowledge       # voci di conoscenza
+├── knowledge       # voci di conoscenza (fatti: niente tempo né salienza)
 ├── configuration   # configurazione dell'agente
 └── runtime         # metadati di runtime
 ```

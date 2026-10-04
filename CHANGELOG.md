@@ -8,6 +8,14 @@ Il formato si basa su [Keep a Changelog](https://keepachangelog.com/).
 
 ### Aggiunto
 
+- **Memoria episodica strutturata** — `MemoryEntry` v0.2, schema `version: "0.2"`.
+  - `occurred_at`: quando l'evento è successo, distinto da `created_at` (quando è stato scritto); non può essere futuro.
+  - `salience` (0–1, default 0.5, fuori intervallo rifiutato), `context` (testo, non un dict), `links[]`.
+  - `MemoryLink` con relazioni tipizzate: `caused_by`, `follows`, `same_topic`, `contradicts`.
+  - `inspect_state()` riporta `dangling_memory_links`: un link verso un ricordo assente è lecito (export parziale) ma va contato.
+- **`KnowledgeEntry`** — `knowledge` non è più un `list[dict]`: fatti tipizzati distinti dai ricordi (nessun `occurred_at` né `salience`) e con i campi extra delle voci legacy conservati, per non perdere fedeltà.
+- **Compatibilità v0.1**: un documento v0.1 valida come v0.2 senza modifiche (`occurred_at` ricavato da `created_at`) e il caricamento non riscrive `version`. Fedeltà round-trip 1.0 su entrambi.
+- **Specifiche**: `specification/zion-state-v0.2.md` descrive il nuovo modello; `zion-state-v0.1.md` resta come snapshot storico.
 - **Server MCP** — strumenti MCP (Model Context Protocol) per gestire lo stato portabile degli agenti AI.
   - `zion_export`: esporta uno stato Zion su file JSON.
   - `zion_import`: importa uno stato Zion da file JSON.
@@ -30,7 +38,7 @@ Il formato si basa su [Keep a Changelog](https://keepachangelog.com/).
   - Strategie: `overwrite`, `keep_target`, `merge`.
   - `selective_merge_strategy`: merge selettivo per dimensione.
   - Registry estensibile di strategie.
-- **99 test** totali (da 37 iniziali): adapters, migration, reconciliation, MCP server. Portata di copertura all'87% con soglia minima dell'80% e typecheck `mypy` su `src/`.
+- **114 test** totali (da 37 iniziali): adapters, migration, reconciliation, MCP server, memoria episodica. Portata di copertura all'88% con soglia minima dell'80% e typecheck `mypy` su `src/`.
 - **Packaging corretto**: `adapters` spostato in `src/` e pacchetti dichiarati esplicitamente in `pyproject.toml` — ora finiscono nel wheel.
 - Rimossi i moduli orfani `zion.storage` e `zion.events` e il fallback `pydantic.v1` in `zion.models` (mai funzionante: il resto del codice usa API v2).
 - **Linter configurato** — `ruff` tra le dev-dependencies con regole esplicite (`E`, `W`, `F`, `I`, `B`, `UP`) in `pyproject.toml`; codice portato a zero errori.
